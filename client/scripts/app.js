@@ -1,8 +1,11 @@
 // YOUR CODE HERE:
+var datum;
 var app = {};
+var roomArray = [];
+var friendsList = [];
+
 app.init = function() {
-  app.fetch();
-  var datum;
+  app.fetch('order=-createdAt');
 };
 
 app.send = function(message) {
@@ -22,16 +25,23 @@ app.send = function(message) {
   });
 };
 
-app.fetch = function() {
+app.fetch = function(query) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: 'https://api.parse.com/1/classes/messages',
     type: 'GET',
     contentType: 'application/json',
-    data: 'order=-createdAt',
+    data: query, //'order=-createdAt', //where={‘username’:’someusername'}
     success: function (data) {
+      if (datum === undefined) {
+        app.getRooms(data.results);
+      }
       datum = data.results;
-      addMessages(data.results);
+      if (query.slice(8, 16) === 'roomname') {
+        addMessages(data.results, data.results[0].roomname);  
+      } else {
+        addMessages(data.results);
+      }
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -42,6 +52,14 @@ app.fetch = function() {
 
 app.clearMessages = function() {
   $('#chats').empty();
+};
+
+app.getRooms = function(rooms) {
+  for (var key in rooms) {
+    if (roomArray.indexOf(rooms[key].roomname) === -1) {
+      roomArray.push(rooms[key].roomname);
+    }  
+  }
 };
 
 app.renderMessage = function(message) {
@@ -66,7 +84,7 @@ app.renderMessage = function(message) {
   // $('#chats').append(newDiv);
 };
 
-app.renderRoom = function(options) {
+app.renderRoom = function(options, selected) {
   //<option value="audi">Audi</option>
   $('#roomSelect').empty();
   var optionAll = document.createElement('option');
@@ -83,24 +101,39 @@ app.renderRoom = function(options) {
   optionAddNew.appendChild(optionAddText);
   $('#roomSelect').append(optionAddNew);
 
-  var arr = [];
-  for (var key in options) {
-    if (arr.indexOf(options[key].roomname) === -1) {
-      arr.push(options[key].roomname);
-    }  
-  }
-  for (var i = 0; i < arr.length; i++) {
+  //var arr = [];
+  // for (var key in datum) {
+  //   if (arr.indexOf(datum[key].roomname) === -1) {
+  //     arr.push(datum[key].roomname);
+  //   }  
+  // }
+  for (var i = 0; i < roomArray.length; i++) {
     var option = document.createElement('option');
-    var optionText = document.createTextNode(arr[i]);
-    option.value = arr[i];
+    var optionText = document.createTextNode(roomArray[i]);
+    option.value = roomArray[i];
     option.appendChild(optionText);
     //var option = '<option value="' + options + '">' + options + '</option>';
     $('#roomSelect').append(option);
   }
+  if (selected !== undefined) {
+    $('#roomSelect').val(selected);
+  }
 };
 
-app.handleUsernameClick = function() {
+app.handleUsernameClick = function(node) {
   // $('.username')
+  var username = node.text(); 
+  if (friendsList.indexOf(username) === -1) {
+    friendsList.push(username);
+    node.parent().css('font-weight', '800');
+    var children = $('#chats').children(); 
+    for (var i = 0; i < children.length; i++) {
+      if (children[i].children.message.innerHTML === username) {
+        children[i].children[1].className = 'friend-message';
+        //children[i].children()[1].css('font-weight', '800');
+      }
+    }
+  }
 };
 
 app.handleSubmit = function() {
@@ -115,22 +148,13 @@ app.handleSubmit = function() {
   };
   app.clearMessages();
   app.send(message);
-  app.fetch();
+  app.fetch('where={"roomname": "' + room + '"}');
 };
 
-var addMessages = function(data) {
-  app.renderRoom(data);
+var addMessages = function(data, selected) {
+  app.renderRoom(data, selected);
   for (var key in data) {
     app.renderMessage(data[key]);
-  }
-};
-
-var makeRoom = function(roomName) {
-  app.clearMessages();
-  for (var key in datum) {
-    if (datum[key].roomname === roomName) {
-      app.renderMessage(datum[key]);
-    }
   }
 };
 
@@ -140,30 +164,37 @@ var blankRoom = function(roomName) {
   var optionNewText = document.createTextNode(roomName);
   optionNew.value = roomName;
   optionNew.appendChild(optionNewText);
+  if (roomArray.indexOf(roomName) === -1) {
+    roomArray.push(roomName);
+    app.getRooms(datum);
+  }
   $('#roomSelect').append(optionNew);
+  $('#roomSelect').val(roomName);
 };
 
 $(document).ready(function() {
   app.init();
 
   $('body').on('click', '.username', function() {
-    app.handleUsernameClick();
+    app.handleUsernameClick($(this));
   });
 
   $('body').on('click', '.submit', function() {
     app.handleSubmit();
   });
 
-
   $('#roomSelect').change(function() {
     if ($(this).val() === 'all') {
       app.clearMessages();
-      app.fetch();
+      app.fetch('order=-createdAt');
     } else if ($(this).val() === 'addNew') {
       var newRoomName = prompt('Name of the room');
       blankRoom(newRoomName);
     } else {
-      makeRoom($(this).val());
+      app.clearMessages();
+      console.log($(this).val());
+      app.fetch('where={"roomname": "' + $(this).val() + '"}');//where={‘username’:’someusername'}
     }
   });
+
 });

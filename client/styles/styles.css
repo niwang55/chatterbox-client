@@ -87,6 +87,7 @@ form input[type=text] {
 .tweet {
     background-color: #b3ffff;
     background: linear-gradient(to right, #b3ffff , #008080);
+    padding: 10px;
     margin-bottom: 15px;
     border-radius: 10px;
     box-shadow: 10px 10px 5px grey;
@@ -96,7 +97,15 @@ form input[type=text] {
 .username {
     font-family: sans-serif;
     font-size: 20px;
-    font-weight: 1000;
+    font-weight: 600;
 }
 
+.username:hover {
+    color: blue;
+    cursor: pointer;
+}
 
+.friend-message {
+    font-weight: 800;
+    color: green;
+}
