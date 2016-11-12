@@ -65,10 +65,6 @@ form input[type=text] {
     background-color: #eee;
 }
 
-.chat .username {
-    font-weight: 800;
-}
-
 .chat:hover {
     background-color: #ddd;
 }
@@ -87,4 +83,20 @@ form input[type=text] {
     color: #fff;
     background-color: #0090da;
 }
+
+.tweet {
+    background-color: #b3ffff;
+    background: linear-gradient(to right, #b3ffff , #008080);
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 10px 10px 5px grey;
+
+}
+
+.username {
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: 1000;
+}
+
 
