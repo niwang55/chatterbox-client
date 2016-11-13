@@ -1,23 +1,27 @@
 body {
-    background: #eee;
+    background-image: url('http://cdn.wallpapersafari.com/87/73/9h862R.jpg');
     text-align: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     padding: 0 25px;
     font-family: arial, sans-serif;
 }
 
 #main, #chats {
-    width: 500px;
-    margin: auto;
+    width: 800px;
     text-align: left;
-    background: white;
+    /*background-color: rgba(0, 0, 0, 0.5);*/
+    background: linear-gradient(to right, rgba(0, 0, 0, 1.0), rgba(94, 10, 102, 0.2));
+    color:white;
     padding: 50px 60px;
-    border: solid #ddd;
+    border: none;
     border-width: 0 1px 1px 1px;
+    margin-left: -30px;
 }
 
 #main h1 {
     margin-top: 0;
-    font-size: 35px;
+    font-size: 100px;
     margin-bottom: 5px;
     padding: 5px;
 }
@@ -84,13 +88,17 @@ form input[type=text] {
     background-color: #0090da;
 }
 
+#roomSelect {
+    width: 20%;
+}
 .tweet {
     background-color: #b3ffff;
     background: linear-gradient(to right, #b3ffff , #008080);
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 10px;
-    box-shadow: 10px 10px 5px grey;
+    min-height: 75px;
+    color: black;
 
 }
 
@@ -108,4 +116,39 @@ form input[type=text] {
 .friend-message {
     font-weight: 800;
     color: green;
+}
+
+.image {
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+    float: left;
+    border-radius: 50%;
+}
+
+.tweet:hover {
+    box-shadow: 10px 10px 5px grey;
+}
+
+.friends-list {
+    padding: 10px;
+    font-family: sans-serif;
+    font-size: 20px;
+    color: white;
+    width: 200px;
+    height: 500px;
+    position: fixed;
+    right: 50px;
+    top: 200px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 1.0), rgba(94, 10, 102, 0.2));
+}
+
+.friend-name {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.friend-name:hover {
+    color: #a5a8af;
+    cursor: pointer;
 }

@@ -68,12 +68,16 @@ app.renderMessage = function(message) {
   var tweetDiv = document.createElement("div");
   var userNode = document.createTextNode(message.username); 
   var textNode = document.createTextNode(message.text); 
+  var img = document.createElement('img');
+  img.src = "https://image.freepik.com/free-icon/user-male-shape-in-a-circle-ios-7-interface-symbol_318-35357.jpg";
+  img.className = "image";
   tweetDiv.className = "tweet";
   msgDiv.className = "message";
   userDiv.className = "username";
   userDiv.id = "message";
   userDiv.appendChild(userNode);
   msgDiv.appendChild(textNode);
+  tweetDiv.appendChild(img);
   tweetDiv.appendChild(userDiv);
   tweetDiv.appendChild(msgDiv);
   $('#chats').append(tweetDiv);
@@ -122,7 +126,7 @@ app.renderRoom = function(options, selected) {
 
 app.handleUsernameClick = function(node) {
   // $('.username')
-  var username = node.text(); 
+  var username = node.text();
   if (friendsList.indexOf(username) === -1) {
     friendsList.push(username);
     node.parent().css('font-weight', '800');
@@ -133,6 +137,12 @@ app.handleUsernameClick = function(node) {
         //children[i].children()[1].css('font-weight', '800');
       }
     }
+    // console.log(children[i].children.message.innerHTML);
+    var friend = document.createElement('p');
+    friend.className = 'friend-list friend-name';
+    var friendText = document.createTextNode(username);
+    friend.appendChild(friendText);
+    $('.friends-list').append(friend);
   }
 };
 
@@ -140,7 +150,6 @@ app.handleSubmit = function() {
   var formText = $('#formText').val();
   var user = window.location.search.slice(10);
   var room = $('#roomSelect :selected').val();
-  console.log(room);
   var message = {
     username: user,
     text: formText,
@@ -179,8 +188,24 @@ $(document).ready(function() {
     app.handleUsernameClick($(this));
   });
 
+  $('body').on('click', '.friend-name', function() {
+    app.clearMessages();
+    var name = $(this).context.innerHTML;
+    app.fetch('where={"username": "' + name + '"}');
+  });
+
   $('body').on('click', '.submit', function() {
     app.handleSubmit();
+  });
+
+  $('body').on('click', '.refresh', function() {
+    app.clearMessages();
+    app.fetch('order=-createdAt');
+  });
+
+  $('body').on('click', '.image', function() {
+    var url = prompt('Give me an image url');
+    $(this).context.src = url;
   });
 
   $('#roomSelect').change(function() {
